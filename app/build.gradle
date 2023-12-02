@@ -6,6 +6,9 @@ plugins {
 android {
     namespace 'com.example.weather'
     compileSdk 33
+    buildFeatures{
+        viewBinding true
+    }
 
     defaultConfig {
         applicationId "com.example.weather"
@@ -30,6 +33,8 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+
 }
 
 dependencies {
