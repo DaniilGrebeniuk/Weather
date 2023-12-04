@@ -10,11 +10,26 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.FragmentActivity
 import com.example.weather.R
+import com.example.weather.adapters.VpAdapter
 import com.example.weather.databinding.FragmentMainBinding
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 
 class MainFragment : Fragment() {
+    //список с фрагментами между которыми мы будем переключаться
+    private var fList = listOf(
+        HoursFragment.newInstance(),
+        DaysFragment.newInstance()
+    )
+    //создаем список наших названий наших табов
+    private var tList = listOf(
+        "Hours",
+        "Days"
+    )
+
     //Создали переменную для лаунчира
     private lateinit var pLauncher: ActivityResultLauncher<String>
 
@@ -32,7 +47,17 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkPermission() //запускаем проверку
+        // checkPermission() //запускаем проверку
+        init() //запускаем функцию
+
+    }
+//создаем функцию в которой будем инициализировать наш адаптер и переход между фрагментами
+    private fun init() = with(binding) {
+        var adapter = VpAdapter(activity as FragmentActivity, fList) //создаем адаптер и присваиваем инстанцию VpAdapter
+        vp.adapter = adapter //подключаем к wiew адаптер
+        TabLayoutMediator(tabDayHours, vp) { tab, pos -> //логика переключения
+            tab.text = tList[pos]
+        }.attach() //запускаем всю логику
     }
 
     //Сщздаём функцию для лаунчира здесь будет прописанна логика в зависимости от выбора пользователя даёт/не даёт разрешение
@@ -44,7 +69,8 @@ class MainFragment : Fragment() {
             Toast.makeText(activity, "Permision is $it", Toast.LENGTH_SHORT).show()
         }
     }
-//функция запроса если разрешения нет, то выводим лаунчер с запросом
+
+    //функция запроса если разрешения нет, то выводим лаунчер с запросом
     private fun checkPermission() {
         if (!isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
             permissionListener()
